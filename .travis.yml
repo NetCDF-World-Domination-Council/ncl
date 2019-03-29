@@ -1,0 +1,31 @@
+language: c
+dist: trusty
+sudo: false
+
+branches:
+  only:
+  - master
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - pkg-config netcdf-bin libnetcdf-dev gfortran libfreetype6-dev
+
+before_install:
+    - sudo apt-get install -y  libhdf5-serial-dev libhe5-hdfeos-dev libhe5-hdfeos0  libhdf4-alt-dev libhdfeos-dev libhdfeos0 libudunits2-dev libgeotiff-dev libgdal-dev &> /dev/null
+
+before_script:
+  - pwd
+  
+env:
+  global:
+    - CPPFLAGS='-I/usr/include -I/usr/include/freetype2'
+    - LDFLAGS='-L/usr/lib'
+    - LIBS='-lhdfeos -ldl -lhe5_hdfeos -lhdf5 -lhdf5_hl -ljasper'
+    - FFLAGS=-fno-range-check 
+script:
+  - autoreconf -i &> /dev/null
+  - ./configure &> /dev/null
+  - make check > /dev/null
